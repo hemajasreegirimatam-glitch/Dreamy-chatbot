@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dreamy AI</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
+  font-family: Arial;
+  color: white;
+}
+
+.chat-box {
+  width: 360px;
+  height: 520px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  background: rgba(255,255,255,0.1);
+}
+
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.msg {
+  margin: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.user {
+  background: #7c3aed;
+  margin-left: auto;
+}
+
+.bot {
+  background: rgba(255,255,255,0.15);
+}
+
+.input-box {
+  display: flex;
+  padding: 10px;
+  background: rgba(255,255,255,0.1);
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+}
+
+button {
+  margin-left: 8px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #a855f7;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-box">
+  <div class="header">💖 Dreamy AI</div>
+
+  <div class="messages" id="chat"></div>
+
+  <div class="input-box">
+    <input id="input" placeholder="Type something..." />
+    <button onclick="send()">Send</button>
+  </div>
+</div>
+
+<script>
+let userName = localStorage.getItem("name") || null;
+
+/* ADD MESSAGE */
+function addMsg(text, type) {
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+
+  const chat = document.getElementById("chat");
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* DELAY */
+function delay() {
+  return Math.random() * 1200 + 500;
+}
+
+/* REPLY ENGINE (FIXED NATURAL FLOW) */
+function getReply(msg) {
+  msg = msg.toLowerCase().trim();
+
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  // greetings
+  if (msg.match(/hi|hello|hey/)) {
+    return pick(["hey 😄", "hi 😌", "hello 👋"]);
+  }
+
+  // how are you
+  if (msg.includes("how are you")) {
+    return pick([
+      "i’m good 😌 you?",
+      "fine 👍 what about you?",
+      "okay 😄 tell me about you"
+    ]);
+  }
+
+  // feelings
+  if (msg.match(/sad|cry|bad|tired/)) {
+    return pick([
+      "aww 🥺 what happened?",
+      "I’m here 💙",
+      "don’t feel alone 😌"
+    ]);
+  }
+
+  if (msg.match(/happy|good|nice/)) {
+    return pick([
+      "nice 😄",
+      "good to hear 💖",
+      "happy ga unte super ✨"
+    ]);
+  }
+
+  // food
+  if (msg.match(/food|tiffin|lunch|eat/)) {
+    return pick([
+      "em tinav 😄?",
+      "baga tinu 😌",
+      "hungry ga unava?"
+    ]);
+  }
+
+  // study/work
+  if (msg.match(/study|exam|college|work/)) {
+    return pick([
+      "baga chadutunnava 😄?",
+      "stress ekkuva unda?",
+      "all the best 💖"
+    ]);
+  }
+
+  // VERY IMPORTANT: no random interruption questions anymore
+  return pick([
+    "hmm 😌",
+    "I get you",
+    "okay 👍",
+    "go on 👀",
+    "interesting 😄",
+    "tell me more"
+  ]);
+}
+
+/* SEND */
+function send() {
+  const input = document.getElementById("input");
+  const text = input.value;
+
+  if (!text.trim()) return;
+
+  addMsg(text, "user");
+  input.value = "";
+
+  // save name first message
+  if (!userName) {
+    userName = text;
+    localStorage.setItem("name", userName);
+
+    setTimeout(() => {
+      addMsg(`nice to meet you ${userName} 💖`, "bot");
+    }, delay());
+
+    return;
+  }
+
+  setTimeout(() => {
+    let reply = getReply(text);
+
+    if (Math.random() < 0.2 && userName) {
+      reply += ` ${userName}`;
+    }
+
+    addMsg(reply, "bot");
+  }, delay());
+}
+
+/* WELCOME */
+setTimeout(() => {
+  addMsg("hi 💖 what's your name?", "bot");
+}, 500);
+</script>
+
+</body>
+</html>
